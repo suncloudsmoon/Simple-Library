@@ -27,7 +27,7 @@
 
 namespace sl {
 	namespace osutil {
-		constexpr unsigned int default_icon_index{ 0 };
+		constexpr unsigned default_icon_index{ 0 };
 		constexpr std::string_view url_description_hash{ "[{5CBF2787-48CF-4208-B90E-EE5E5D420294}]" };
 		constexpr std::string_view url_notes_field_hash{ "[{B9B4B3FC-2B51-4A42-B5D8-324146AFCF25}]" };
 		constexpr std::string_view url_star_rating_hash{ "[{64440492-4C8B-11D1-8B70-080036B11A03}]" };
@@ -43,48 +43,54 @@ namespace sl {
 		* rating - rating of the shortcut in the range from 1 to 5 stars.
 		*/
 		namespace fs = std::filesystem;
-		void create_win_shortcut(const fs::path& dest, std::string url, std::string icon_path,
+		bool create_win_shortcut(const fs::path& dest, std::string url, std::string icon_path,
 								const std::string& description, const std::string& notes, 
 								unsigned rating) {
 #ifndef _WIN32
 #error Can only create shortcuts in windows!
 #endif
 			std::ofstream out{ dest };
-			out << "[InternetShortcut]\n";
-			out << "URL=" << url << '\n';
-			out << "IconFile=" << icon_path << '\n';
-			out << "IconIndex=" << default_icon_index  << '\n';
-			
-			out << url_description_hash << '\n';
-			out << "Prop21=31," << description << '\n';
+			if (out.is_open()) {
+				out << "[InternetShortcut]\n";
+				out << "URL=" << url << '\n';
+				out << "IconFile=" << icon_path << '\n';
+				out << "IconIndex=" << default_icon_index << '\n';
 
-			out << url_notes_field_hash << '\n';
-			out << "Prop5=31," << notes << '\n';
+				out << url_description_hash << '\n';
+				out << "Prop21=31," << description << '\n';
 
-			out << url_star_rating_hash << '\n';
-			out << "Prop9=19,";
+				out << url_notes_field_hash << '\n';
+				out << "Prop5=31," << notes << '\n';
 
-			switch (rating) {
-			case 1:
-				out << "1";
-				break;
-			case 2:
-				out << "25";
-				break;
-			case 3:
-				out << "50";
-				break;
-			case 4:
-				out << "75";
-				break;
-			case 5:
-				out << "99";
-				break;
-			default:
-				out << "1";
-				break;
+				out << url_star_rating_hash << '\n';
+				out << "Prop9=19,";
+
+				switch (rating) {
+				case 1:
+					out << "1";
+					break;
+				case 2:
+					out << "25";
+					break;
+				case 3:
+					out << "50";
+					break;
+				case 4:
+					out << "75";
+					break;
+				case 5:
+					out << "99";
+					break;
+				default:
+					out << "1";
+					break;
+				}
+				out << '\n';
+				return true;
 			}
-			out << '\n';
+			else {
+				return false;
+			}
 		}
 	}
 }
