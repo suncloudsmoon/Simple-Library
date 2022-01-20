@@ -27,6 +27,9 @@
 #include <iterator>
 
 namespace sl {
+	/*
+	* Cross-platform utils for manipulating files and diretories.
+	*/
 	namespace fileutil {
 		namespace fs = std::filesystem;
 		/*
