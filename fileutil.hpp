@@ -29,8 +29,6 @@
 namespace sl {
 	namespace fileutil {
 		namespace fs = std::filesystem;
-		using extension = std::string;
-
 		/*
 		* Writes content to file.
 		* 
@@ -54,8 +52,8 @@ namespace sl {
 		* from - contains the previous extension to search for, like ".txt".
 		* to - has the extension to replace the from extension, like ".data".
 		*/
-		void rename_file_extensions(const fs::path& path, const extension& from, 
-									const extension& to, bool is_sub_dirs) {
+		void rename_file_extensions(const fs::path& path, const std::string& from, 
+									const std::string& to, bool is_sub_dirs) {
 			if (is_sub_dirs) {
 				for (const auto& dir :
 					fs::recursive_directory_iterator(path, fs::directory_options::skip_permission_denied)) {

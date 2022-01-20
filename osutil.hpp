@@ -21,16 +21,23 @@
 #define SL_OSUTIL_HPP
 
 #include <string>
-#include <string_view>
 #include <filesystem>
 #include <fstream>
 
 namespace sl {
 	namespace osutil {
+		namespace win {
+			constexpr const char* user_profile_path_env{ "%userprofile%" };
+			constexpr const char* app_data_path_env{ "%appdata%" };
+			constexpr const char* username_env{ "%username%" };
+
+			constexpr const char* start_menu_path{ R"(\Microsoft\Windows\Start Menu\Programs)" };
+			constexpr const char* desktop_path{ R"(\Desktop)" };
+		}
 		constexpr unsigned default_icon_index{ 0 };
-		constexpr std::string_view url_description_hash{ "[{5CBF2787-48CF-4208-B90E-EE5E5D420294}]" };
-		constexpr std::string_view url_notes_field_hash{ "[{B9B4B3FC-2B51-4A42-B5D8-324146AFCF25}]" };
-		constexpr std::string_view url_star_rating_hash{ "[{64440492-4C8B-11D1-8B70-080036B11A03}]" };
+		constexpr const char* url_description_hash{ "[{5CBF2787-48CF-4208-B90E-EE5E5D420294}]" };
+		constexpr const char* url_notes_field_hash{ "[{B9B4B3FC-2B51-4A42-B5D8-324146AFCF25}]" };
+		constexpr const char* url_star_rating_hash{ "[{64440492-4C8B-11D1-8B70-080036B11A03}]" };
 
 		/*
 		* Creates .url shortcuts for windows
