@@ -24,8 +24,16 @@
 #include <filesystem>
 #include <fstream>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 namespace sl {
 	namespace osutil {
+		enum class message_type {
+			info, warning, error
+		};
+
 		/*
 		* Windows utils for creating .url shorcuts
 		*/
@@ -43,6 +51,8 @@ namespace sl {
 
 			constexpr unsigned default_icon_index{ 0 };
 
+			namespace fs = std::filesystem;
+
 			/*
 			* Creates .url shortcuts for windows
 			*
@@ -53,10 +63,8 @@ namespace sl {
 			* notes - notes of the shortcut.
 			* rating - rating of the shortcut in the range from 1 to 5 stars.
 			*/
-			namespace fs = std::filesystem;
-			bool create_win_shortcut(const fs::path& dest, std::string url, std::string icon_path,
-				const std::string& description, const std::string& notes,
-				unsigned rating) {
+			bool create_shortcut(const fs::path& dest, std::string url, std::string icon_path,
+				const std::string& description, const std::string& notes, unsigned rating) {
 #ifndef _WIN32
 #error Can only create shortcuts in windows!
 #endif
@@ -103,6 +111,33 @@ namespace sl {
 					return false;
 				}
 			}
+		}
+		
+		void show_message_popup(const std::string& title, const std::string& description, 
+								message_type type = message_type::info) {
+#ifdef _WIN32
+			std::wstring wide_title_str{ title.begin(), title.end() };
+			std::wstring wide_description_str{ description.begin(), description.end() };
+			UINT icon_type{ 0 };
+			switch (type) {
+			case message_type::info:
+				icon_type = MB_ICONINFORMATION;
+				break;
+			case message_type::warning:
+				icon_type = MB_ICONWARNING;
+				break;
+			case message_type::error:
+				icon_type = MB_ICONERROR;
+				break;
+			default:
+				icon_type = MB_ICONINFORMATION;
+				break;
+			}
+			MessageBox(NULL, wide_description_str.c_str(),  wide_title_str.c_str(),
+					icon_type | MB_OK);
+#else
+#error "showing a message popup is not supported on other platforms yet!"
+#endif
 		}
 	}
 }

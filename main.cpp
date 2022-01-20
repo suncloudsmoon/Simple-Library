@@ -28,6 +28,6 @@ int main() {
 }
 
 void test_os_util() {
-	sl::osutil::create_win_shortcut("shortcut.url", "https://www.google.com",
-									"", "description", "notes", 5);
+	namespace os = sl::osutil;
+	os::show_message_popup("something", "I want to talk to you!", os::message_type::info);
 }
