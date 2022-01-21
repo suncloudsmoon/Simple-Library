@@ -39,7 +39,7 @@ namespace sl {
 		* src - a string or object (overloading <<) to write to file.
 		*/
 		template<typename FilePath, typename Content>
-		bool write_to_file(const FilePath& path, const Content& src) {
+		inline bool write_to_file(const FilePath& path, const Content& src) {
 			std::ofstream out(path);
 			if (out.is_open()) {
 				out << src;
@@ -55,7 +55,7 @@ namespace sl {
 		* from - contains the previous extension to search for, like ".txt".
 		* to - has the extension to replace the from extension, like ".data".
 		*/
-		void rename_file_extensions(const fs::path& path, const std::string& from, 
+		inline void rename_file_extensions(const fs::path& path, const std::string& from, 
 									const std::string& to, bool is_sub_dirs) {
 			if (is_sub_dirs) {
 				for (const auto& dir :
@@ -88,7 +88,7 @@ namespace sl {
 		* func - a lambda function that takes in the path of the file and the reference to its contents
 		*		and returns true to change the file's contents and false otherwise.
 		*/
-		void change_file_when(const fs::path& path, bool is_sub_dirs, 
+		inline void change_file_when(const fs::path& path, bool is_sub_dirs, 
 							std::function <bool(const fs::path&, std::string&)> func) {
 			if (is_sub_dirs) {
 				for (const auto& s : fs::recursive_directory_iterator{ path, fs::directory_options::skip_permission_denied }) {

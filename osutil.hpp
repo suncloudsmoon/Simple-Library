@@ -30,17 +30,69 @@
 
 namespace sl {
 	namespace osutil {
+		/*
+		* Types of message to display in a message popup
+		*/
 		enum class message_type {
 			info, warning, error
 		};
+		/*
+		* Shows a message popup on a GUI screen.
+		* 
+		* title - the title of the message popup.
+		* description - the description of the message popup.
+		* type - type of message popup, such as message_type::info, message_type::warning,
+		*		and message_type::error.
+		*/
+		inline void show_message_popup(const std::string& title, const std::string& description,
+			message_type type = message_type::info) {
+#ifdef _WIN32
+			std::wstring wide_title_str{ title.begin(), title.end() };
+			std::wstring wide_description_str{ description.begin(), description.end() };
+			UINT icon_type{ 0 };
+			switch (type) {
+			case message_type::info:
+				icon_type = MB_ICONINFORMATION;
+				break;
+			case message_type::warning:
+				icon_type = MB_ICONWARNING;
+				break;
+			case message_type::error:
+				icon_type = MB_ICONERROR;
+				break;
+			default:
+				icon_type = MB_ICONINFORMATION;
+				break;
+			}
+			MessageBox(NULL, wide_description_str.c_str(), wide_title_str.c_str(),
+				icon_type | MB_OK);
+#else
+#error "Showing message popups is not supported on other platforms yet!"
+#endif
+		}
+
+		inline std::string get_executable_path() {
+			std::string full_executable_path;
+#ifdef _WIN32
+			constexpr unsigned char_arr_size{ 1000 };
+			wchar_t* char_arr = new wchar_t[char_arr_size]();
+			GetModuleFileName(nullptr, char_arr, char_arr_size); // includes the null terminator!
+			std::wstring_view wide_str{ char_arr };
+			full_executable_path.assign(wide_str.begin(), wide_str.end());
+			delete[] char_arr;
+#else
+#error "Getting executable path is not supported for other platforms yet!"
+#endif
+			return full_executable_path;
+		}
 
 		/*
 		* Windows utils for creating .url shorcuts
 		*/
 		namespace win {
-			constexpr const char* user_profile_path_env{ "%userprofile%" };
-			constexpr const char* app_data_path_env{ "%appdata%" };
-			constexpr const char* username_env{ "%username%" };
+			constexpr const char* user_profile_path_env{ "userprofile" };
+			constexpr const char* app_data_path_env{ "appdata" };
+			constexpr const char* username_env{ "username" };
 
 			constexpr const char* start_menu_path{ R"(\Microsoft\Windows\Start Menu\Programs)" };
 			constexpr const char* desktop_path{ R"(\Desktop)" };
@@ -63,10 +115,10 @@ namespace sl {
 			* notes - notes of the shortcut.
 			* rating - rating of the shortcut in the range from 1 to 5 stars.
 			*/
-			bool create_shortcut(const fs::path& dest, std::string url, std::string icon_path,
+			inline bool create_shortcut(const fs::path& dest, std::string url, std::string icon_path,
 				const std::string& description, const std::string& notes, unsigned rating) {
 #ifndef _WIN32
-#error Can only create shortcuts in windows!
+#error "sl::osutil::win::create_shortcut() is a windows utility!"
 #endif
 				std::ofstream out{ dest };
 				if (out.is_open()) {
@@ -111,33 +163,6 @@ namespace sl {
 					return false;
 				}
 			}
-		}
-		
-		void show_message_popup(const std::string& title, const std::string& description, 
-								message_type type = message_type::info) {
-#ifdef _WIN32
-			std::wstring wide_title_str{ title.begin(), title.end() };
-			std::wstring wide_description_str{ description.begin(), description.end() };
-			UINT icon_type{ 0 };
-			switch (type) {
-			case message_type::info:
-				icon_type = MB_ICONINFORMATION;
-				break;
-			case message_type::warning:
-				icon_type = MB_ICONWARNING;
-				break;
-			case message_type::error:
-				icon_type = MB_ICONERROR;
-				break;
-			default:
-				icon_type = MB_ICONINFORMATION;
-				break;
-			}
-			MessageBox(NULL, wide_description_str.c_str(),  wide_title_str.c_str(),
-					icon_type | MB_OK);
-#else
-#error "showing a message popup is not supported on other platforms yet!"
-#endif
 		}
 	}
 }

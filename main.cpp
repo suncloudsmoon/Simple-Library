@@ -29,5 +29,5 @@ int main() {
 
 void test_os_util() {
 	namespace os = sl::osutil;
-	os::show_message_popup("something", "I want to talk to you!", os::message_type::info);
+	std::cout << os::get_executable_path();
 }
