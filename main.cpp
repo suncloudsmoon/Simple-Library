@@ -18,13 +18,23 @@
  */
 
 #include <iostream>
-
+#include <stdexcept>
 #include "osutil.hpp"
+#include "cwrapper.hpp"
 
+void test_c_wrapper();
 void test_os_util();
 
 int main() {
-	test_os_util();
+	test_c_wrapper();
+	/*test_os_util();*/
+}
+
+void test_c_wrapper() {
+	sl::FILE some;
+	if (!some.open("hello.txt", "w"))
+		throw std::runtime_error("Unable to open hello.txt!");
+	some.printf("%s", "hello");
 }
 
 void test_os_util() {

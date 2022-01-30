@@ -26,5 +26,11 @@
     <ClInclude Include="osutil.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="winutil.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cwrapper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
